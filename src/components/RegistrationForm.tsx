@@ -1,11 +1,10 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
-import { registerUser } from "../api/api";
-import { useAuth } from "../context/useAuth";
 import {
   validateRegister,
   type RegisterErrors,
   type RegisterFields,
 } from "../utils/validate";
+import { useRegisterMutation } from "../hooks/useRegisterMutation";
 
 const RegistrationForm = () => {
   const [fields, setFields] = useState<RegisterFields>({
@@ -14,10 +13,8 @@ const RegistrationForm = () => {
     name: "",
     confirm: "",
   });
-  const [isPending, setIsPending] = useState<boolean>(false);
   const [errors, setErrors] = useState<RegisterErrors>({});
-
-  const { login } = useAuth();
+  const { mutate, isPending, errorMessage } = useRegisterMutation();
 
   const handleOnChange =
     (key: keyof RegisterFields) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,23 +22,11 @@ const RegistrationForm = () => {
       setErrors((prev) => ({ ...prev, [key]: undefined }));
     };
 
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validation = validateRegister(fields);
     if (Object.keys(validation).length) return setErrors(validation);
-    setIsPending(true);
-
-    try {
-      const data = await registerUser({
-        email: fields.email,
-        password: fields.password,
-      });
-      login(data.token, { email: fields.email });
-    } catch (error) {
-      setErrors({ server: (error as Error).message });
-    } finally {
-      setIsPending(false);
-    }
+    mutate({ email: fields.email, password: fields.password });
   };
 
   return (
@@ -133,8 +118,8 @@ const RegistrationForm = () => {
       >
         {isPending ? "Регистрация..." : "Зарегистрироваться"}
       </button>
-      {errors.server && (
-        <p style={{ color: "red", fontSize: 12 }}>{errors.server}</p>
+      {errorMessage && (
+        <p style={{ color: "red", fontSize: 12 }}>{errorMessage}</p>
       )}
     </form>
   );

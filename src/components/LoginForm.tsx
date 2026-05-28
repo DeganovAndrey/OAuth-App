@@ -1,21 +1,18 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
-import { loginUser } from "../api/api";
-import { useAuth } from "../context/useAuth";
 import {
   validateLogin,
   type LoginErrors,
   type LoginFields,
 } from "../utils/validate";
+import { useLoginMutation } from "../hooks/useLoginMutation";
 
 const LoginForm = () => {
   const [fields, setFields] = useState<LoginFields>({
     email: "",
     password: "",
   });
-  const [isPending, setIsPending] = useState<boolean>(false);
   const [errors, setErrors] = useState<LoginErrors>({});
-
-  const { login } = useAuth();
+  const { mutate, isPending, error } = useLoginMutation();
 
   const handleOnChange =
     (key: keyof LoginFields) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,16 +27,7 @@ const LoginForm = () => {
 
     if (Object.keys(validation).length) return setErrors(validation);
 
-    setIsPending(true);
-
-    try {
-      const data = await loginUser(fields);
-      login(data.token, { email: fields.email });
-    } catch (err) {
-      setErrors({ server: (err as Error).message });
-    } finally {
-      setIsPending(false);
-    }
+    mutate(fields);
   };
 
   return (
@@ -98,9 +86,7 @@ const LoginForm = () => {
       >
         {isPending ? "Вход..." : "Войти"}
       </button>
-      {errors.server && (
-        <p style={{ color: "red", fontSize: 12 }}>{errors.server}</p>
-      )}
+      {error && <p style={{ color: "red", fontSize: 12 }}>{error.message}</p>}
     </form>
   );
 };
