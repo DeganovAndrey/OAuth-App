@@ -1,7 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
 import {
   MutationCache,
   QueryCache,
@@ -9,6 +8,12 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { AuthProvider } from "./context/AuthProvider.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import AuthForm from "./components/AuthForm.tsx";
+import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import Dashboard from "./components/Dashboard.tsx";
+import Profile from "./components/Profile.tsx";
+import PublicRoute from "./components/PublicRoute.tsx";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -39,12 +44,30 @@ declare global {
 
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
+const router = createBrowserRouter([
+  {
+    element: <AuthProvider />,
+    children: [
+      {
+        element: <PublicRoute />,
+        children: [{ path: "/", element: <AuthForm /> }],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: "/dashboard", element: <Dashboard /> },
+          { path: "/profile", element: <Profile /> },
+        ],
+      },
+    ],
+  },
+]);
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <RouterProvider router={router} />
+      <AuthProvider></AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 );
