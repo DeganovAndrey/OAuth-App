@@ -1,7 +1,9 @@
+import { useAuth } from "src/context/useAuth";
 import { useProfile } from "../hooks/useProfile";
 
-const Profile = ({ id }: { id: number }) => {
-  const { data, error, isLoading, isFetching } = useProfile(id);
+const Profile = () => {
+  const { user } = useAuth();
+  const { data, error, isLoading, isFetching } = useProfile(user?.id);
 
   if (isLoading) return <h2>Loading...</h2>;
   if (error) return <h2>{error.message}</h2>;
