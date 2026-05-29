@@ -11,9 +11,8 @@ import { AuthProvider } from "./context/AuthProvider.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AuthForm from "./components/AuthForm.tsx";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
-import Dashboard from "./components/Dashboard.tsx";
-import Profile from "./components/Profile.tsx";
 import PublicRoute from "./components/PublicRoute.tsx";
+import Dashboard from "./components/Dashboard.tsx";
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -56,7 +55,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute />,
         children: [
           { path: "/dashboard", element: <Dashboard /> },
-          { path: "/profile", element: <Profile /> },
+          // { path: "/profile", element: <Profile /> },
         ],
       },
     ],
