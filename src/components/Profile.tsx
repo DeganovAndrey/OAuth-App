@@ -1,14 +1,15 @@
 import { useProfile } from "../hooks/useProfile";
 
 const Profile = ({ id }: { id: number }) => {
-  const { data, error, isLoading } = useProfile(id);
+  const { data, error, isLoading, isFetching } = useProfile(id);
 
-  if (error) return <h2>{error.message}</h2>;
   if (isLoading) return <h2>Loading...</h2>;
+  if (error) return <h2>{error.message}</h2>;
   if (!data) return null;
 
   return (
     <div>
+      {isFetching && <p>Фоновое обновление данных</p>}
       <h3>
         {data?.first_name} {data?.last_name}
       </h3>
