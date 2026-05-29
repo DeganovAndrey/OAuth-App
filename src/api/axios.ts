@@ -1,5 +1,5 @@
 import axios from "axios";
-import { tokenStorage } from "../authStore";
+import { tokenStorage } from "../utils/authStore";
 
 export const clientApi = axios.create({
   baseURL: "https://reqres.in/api",

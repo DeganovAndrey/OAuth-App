@@ -1,7 +1,7 @@
 import { useEffect, useState, type PropsWithChildren } from "react";
 import type { User } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
-import { tokenStorage } from "../authStore";
+import { tokenStorage } from "../utils/authStore";
 import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
@@ -12,23 +12,26 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const queryClient = useQueryClient();
 
   const login = (token: string, userData: User) => {
-    setUser(userData);
     tokenStorage.accessToken = token;
+    tokenStorage.sessionId = crypto.randomUUID();
+    setUser(userData);
   };
 
   const logout = () => {
     tokenStorage.accessToken = "";
+    tokenStorage.sessionId = "";
     setUser(null);
-    queryClient.clear();
+    queryClient.removeQueries({ queryKey: ["user"] });
   };
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // TODO: запрос к /auth/refresh с refreshToken (httpOnly cookie)
-      // const { accessToken, user } = await clientApi.post("/auth/refresh");
+      // TODO: const { accessToken, user } = await clientApi.post("/auth/refresh");
       // login(accessToken, user);
     };
-    initializeAuth();
+    initializeAuth().catch(() => {
+      // refresh протух — пользователь остаётся неавторизованным
+    });
   }, []);
 
   return (
