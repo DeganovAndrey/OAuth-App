@@ -9,8 +9,5 @@ export const useProfile = (id: number) => {
     queryFn: () => getProfile(id),
     enabled: !!tokenStorage.sessionId && !!id,
     staleTime: 5 * 60 * 1000,
-    // данные остаются свежими 5 минут,
-    // затем фоново рефетчим и обновляем данные
-    // а при выходе - принудительно сбрасываем кэш через removeQueries
   });
 };

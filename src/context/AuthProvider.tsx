@@ -25,13 +25,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   };
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      // TODO: const { accessToken, user } = await clientApi.post("/auth/refresh");
-      // login(accessToken, user);
-    };
-    initializeAuth().catch(() => {
-      // refresh протух — пользователь остаётся неавторизованным
-    });
+    const initializeAuth = async () => {};
+    initializeAuth().catch(() => {});
   }, []);
 
   return (

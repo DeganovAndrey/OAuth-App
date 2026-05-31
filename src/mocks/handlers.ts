@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 
-const mockRefreshToken = "valid-refresh-token"; // имитация refresh token
+const mockRefreshToken = "valid-refresh-token";
 
 export const handlers = [
   http.post("/api/auth/refresh", ({ request }) => {
