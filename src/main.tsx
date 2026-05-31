@@ -66,15 +66,23 @@ const router = createBrowserRouter(
   },
 );
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider
-        router={router}
-        future={{
-          v7_startTransition: true,
-        }}
-      />
-    </QueryClientProvider>
-  </StrictMode>,
-);
+async function prepare() {
+  if (import.meta.env.DEV) {
+    const { worker } = await import("./mocks/browser.ts");
+    await worker.start({ onUnhandledRequest: "bypass" });
+  }
+}
+prepare().then(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider
+          router={router}
+          future={{
+            v7_startTransition: true,
+          }}
+        />
+      </QueryClientProvider>
+    </StrictMode>,
+  );
+});
