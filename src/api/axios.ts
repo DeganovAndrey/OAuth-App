@@ -1,10 +1,19 @@
 import axios from "axios";
 import { tokenStorage } from "../utils/authStore";
+import { logoutUser } from "./api";
 
 export const clientApi = axios.create({
   baseURL: "https://reqres.in/api",
   timeout: 5000,
 });
+
+let isRefreshing = false;
+let queue: Array<(token: string) => void> = [];
+
+const processQueue = (newToken: string) => {
+  queue.forEach((resolve) => resolve(newToken));
+  queue = [];
+};
 
 const STATUS_MESSAGES: Record<number, string> = {
   400: "Неверный запрос",
@@ -21,8 +30,6 @@ clientApi.interceptors.request.use((config) => {
   }
   return config;
 });
-// Request interceptor — автоматически подставляет access token из памяти в заголовок
-// Authorization: Bearer
 
 clientApi.interceptors.response.use(
   (response) => response.data,
@@ -32,21 +39,40 @@ clientApi.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      // перехватывает 401, пробует обновить токен (или делает logout), затем
-      // повторяет исходный запрос
+
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          queue.push((newToken: string) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(clientApi(originalRequest));
+          });
+        });
+      }
+
+      isRefreshing = true;
 
       try {
-        // ЗАГЛУШКА: reqres.in не поддерживает refresh-токены.
-        // В реальном проекте здесь был бы запрос к /auth/refresh
-        // с refreshToken из httpOnly cookie или tokenStorage.refreshToken,
-        // а в ответ пришёл бы новый accessToken, который мы сохранили бы в память:
-        // const { accessToken } = await clientApi.post("/auth/refresh");
-        // tokenStorage.accessToken = accessToken;
-        throw new Error("Refresh недоступен");
+        const { accessToken } = await axios.post<
+          never,
+          { accessToken: string }
+        >(
+          "/api/auth/refresh",
+          {},
+          { headers: { Authorization: `Bearer ${tokenStorage.refreshToken}` } },
+        );
+        tokenStorage.accessToken = accessToken;
+        processQueue(accessToken);
+        originalRequest.headers.Authorization = `Bearer ${tokenStorage.accessToken}`;
+        return clientApi(originalRequest);
       } catch {
+        logoutUser();
         tokenStorage.accessToken = "";
+        tokenStorage.sessionId = "";
+        tokenStorage.refreshToken = "";
         window.location.href = "/login";
         return Promise.reject(new Error("Сессия истекла, войди заново"));
+      } finally {
+        isRefreshing = false;
       }
     }
 
