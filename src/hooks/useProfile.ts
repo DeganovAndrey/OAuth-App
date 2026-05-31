@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getProfile } from "../api/api";
 import type { User } from "../types";
-import { tokenStorage } from "src/utils/authStore";
+import { tokenStorage } from "../utils/authStore";
 
 export const useProfile = (id: number) => {
   return useQuery<User>({
