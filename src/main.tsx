@@ -43,30 +43,38 @@ declare global {
 
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      element: <AuthProvider />,
+      children: [
+        {
+          element: <PublicRoute />,
+          children: [{ path: "/", element: <AuthForm /> }],
+        },
+        {
+          element: <ProtectedRoute />,
+          children: [{ path: "/dashboard", element: <Dashboard /> }],
+        },
+      ],
+    },
+  ],
   {
-    element: <AuthProvider />,
-    children: [
-      {
-        element: <PublicRoute />,
-        children: [{ path: "/", element: <AuthForm /> }],
-      },
-      {
-        element: <ProtectedRoute />,
-        children: [
-          { path: "/dashboard", element: <Dashboard /> },
-          // { path: "/profile", element: <Profile /> },
-        ],
-      },
-    ],
+    future: {
+      v7_relativeSplatPath: true,
+    },
   },
-]);
+);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <AuthProvider></AuthProvider>
+      <RouterProvider
+        router={router}
+        future={{
+          v7_startTransition: true,
+        }}
+      />
     </QueryClientProvider>
   </StrictMode>,
 );

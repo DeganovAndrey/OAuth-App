@@ -5,6 +5,7 @@ import {
   type RegisterFields,
 } from "../utils/validate";
 import { useRegisterMutation } from "../hooks/useRegisterMutation";
+import PasswordGradeBar from "./PasswordGradeBar";
 
 const RegistrationForm = () => {
   const [fields, setFields] = useState<RegisterFields>({
@@ -85,6 +86,7 @@ const RegistrationForm = () => {
             borderRadius: "15px",
           }}
         />
+        <PasswordGradeBar password={fields.password} />
         {errors.password && (
           <p style={{ color: "red", fontSize: 12 }}>{errors.password}</p>
         )}
@@ -118,9 +120,7 @@ const RegistrationForm = () => {
       >
         {isPending ? "Регистрация..." : "Зарегистрироваться"}
       </button>
-      {error && (
-        <p style={{ color: "red", fontSize: 12 }}>{error.message}</p>
-      )}
+      {error && <p style={{ color: "red", fontSize: 12 }}>{error.message}</p>}
     </form>
   );
 };
