@@ -5,6 +5,7 @@ import {
   type LoginFields,
 } from "../utils/validate";
 import { useLoginMutation } from "../hooks/useLoginMutation";
+import PasswordInput from "./PasswordInput";
 
 const LoginForm = () => {
   const [fields, setFields] = useState<LoginFields>({
@@ -58,17 +59,11 @@ const LoginForm = () => {
         )}
       </div>
       <div>
-        <input
+        <PasswordInput
           value={fields.password}
           onChange={handleOnChange("password")}
           placeholder="password"
-          type="password"
-          style={{
-            border: errors.password ? "1px solid red" : "1px solid gray",
-            padding: "10px",
-            margin: "5px",
-            borderRadius: "15px",
-          }}
+          error={!!errors.password}
         />
         {errors.password && (
           <p style={{ color: "red", fontSize: 12 }}>{errors.password}</p>

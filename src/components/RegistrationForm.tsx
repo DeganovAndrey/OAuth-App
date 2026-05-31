@@ -6,6 +6,7 @@ import {
 } from "../utils/validate";
 import { useRegisterMutation } from "../hooks/useRegisterMutation";
 import PasswordGradeBar from "./PasswordGradeBar";
+import PasswordInput from "./PasswordInput";
 
 const RegistrationForm = () => {
   const [fields, setFields] = useState<RegisterFields>({
@@ -74,17 +75,11 @@ const RegistrationForm = () => {
         )}
       </div>
       <div>
-        <input
+        <PasswordInput
           value={fields.password}
           onChange={handleOnChange("password")}
           placeholder="password"
-          type="password"
-          style={{
-            border: errors.password ? "1px solid red" : "1px solid gray",
-            padding: "10px",
-            margin: "5px",
-            borderRadius: "15px",
-          }}
+          error={!!errors.password}
         />
         <PasswordGradeBar password={fields.password} />
         {errors.password && (
@@ -92,17 +87,11 @@ const RegistrationForm = () => {
         )}
       </div>
       <div>
-        <input
+        <PasswordInput
           value={fields.confirm}
           onChange={handleOnChange("confirm")}
           placeholder="confirm password"
-          type="password"
-          style={{
-            border: errors.confirm ? "1px solid red" : "1px solid gray",
-            padding: "10px",
-            margin: "5px",
-            borderRadius: "15px",
-          }}
+          error={!!errors.confirm}
         />
         {errors.confirm && (
           <p style={{ color: "red", fontSize: 12 }}>{errors.confirm}</p>
