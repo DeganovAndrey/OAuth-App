@@ -19,7 +19,7 @@ export const validateRegister = (fields: RegisterFields) => {
     errors.email = "Введите корректный email";
 
   if (!fields.password.trim()) errors.password = "Введите password";
-  else if (fields.password.length < 6) errors.password = "Минимум 6 символов";
+  else if (fields.password.length < 4) errors.password = "Минимум 4 символов";
 
   if (!fields.confirm) errors.confirm = "Повторите пароль";
   else if (fields.confirm !== fields.password)
@@ -35,7 +35,7 @@ export type LoginErrors = Partial<LoginFields & { server: string }>;
 
 export const validateLogin = (fields: LoginFields) => {
   const errors: LoginErrors = {};
-  if (fields.password.length < 6) errors.password = "Минимум 6 символов";
+  if (fields.password.length < 4) errors.password = "Минимум 4 символа";
   if (!email_val.test(fields.email)) errors.email = "Введите корректный email";
   return errors;
 };

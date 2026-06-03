@@ -16,7 +16,7 @@ const RegistrationForm = () => {
     confirm: "",
   });
   const [errors, setErrors] = useState<RegisterErrors>({});
-  const { mutate, isPending, error } = useRegisterMutation();
+  const { mutate, isPending, errorMessage } = useRegisterMutation();
 
   const handleOnChange =
     (key: keyof RegisterFields) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -109,7 +109,9 @@ const RegistrationForm = () => {
       >
         {isPending ? "Регистрация..." : "Зарегистрироваться"}
       </button>
-      {error && <p style={{ color: "red", fontSize: 12 }}>{error.message}</p>}
+      {errorMessage && (
+        <p style={{ color: "red", fontSize: 12 }}>{errorMessage}</p>
+      )}
     </form>
   );
 };

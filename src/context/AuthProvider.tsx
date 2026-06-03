@@ -22,12 +22,19 @@ export const AuthProvider = () => {
     tokenStorage.accessToken = "";
     tokenStorage.sessionId = "";
     setUser(null);
-    queryClient.removeQueries({ queryKey: ["user"] });
+    queryClient.clear();
   };
 
   useEffect(() => {
-    const initializeAuth = async () => {};
-    initializeAuth().catch(() => {});
+    const initializeAuth = async () => {
+      // TODO: const { accessToken, user } = await clientApi.post("/auth/refresh");
+      // login(accessToken, user);
+      // получаем рефреш токен после рендера фоново, чтобы не фризило ui
+      // и тихо меняем его
+    };
+    initializeAuth().catch(() => {
+      // refresh протух — пользователь остаётся неавторизованным
+    });
   }, []);
 
   return (
