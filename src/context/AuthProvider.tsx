@@ -1,10 +1,11 @@
-import { useEffect, useState, type PropsWithChildren } from "react";
+import { useEffect, useState } from "react";
 import type { User } from "../types";
 import { useQueryClient } from "@tanstack/react-query";
 import { tokenStorage } from "../utils/authStore";
 import { AuthContext } from "./AuthContext";
+import { Outlet } from "react-router-dom";
 
-export const AuthProvider = ({ children }: PropsWithChildren) => {
+export const AuthProvider = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const isAuthenticated = user !== null;
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         logout,
       }}
     >
-      {children}
+      <Outlet />
     </AuthContext.Provider>
   );
 };

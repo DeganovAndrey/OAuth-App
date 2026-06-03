@@ -2,8 +2,8 @@ import { useAuth } from "../context/useAuth";
 import { useProfile } from "../hooks/useProfile";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
-  const { data, error, isLoading, isFetching } = useProfile(user?.id);
+  const { logout } = useAuth();
+  const { data, error, isLoading, isFetching } = useProfile();
 
   if (isLoading) return <h2>Loading...</h2>;
   if (error) return <h2>{error.message}</h2>;
